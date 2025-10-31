@@ -1,11 +1,15 @@
+import Header from "./components/header"
+import Hero from "./components/hero"
+import Footer from "./components/footer"
 
-function App() {
-
+export default function App() {
   return (
-    <>
-      <header>ewfwef </header>
-    </>
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow">
+        <Hero />
+      </main>
+      <Footer />
+    </div>
   )
 }
-
-export default App
