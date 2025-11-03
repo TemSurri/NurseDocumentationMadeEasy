@@ -3,7 +3,7 @@ import Hero from "./components/hero"
 import Footer from "./components/footer"
 import Interface from "./components/recording_interface"
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
-
+import About from "./components/about.tsx"
 
 export default function App() {
   return (
@@ -14,6 +14,7 @@ export default function App() {
         <Routes>
           <Route path='/record' element= {<Interface />}/>
           <Route path='/' element={<Hero/>}/>
+          <Route path='/about' element={<About/>}/>
         </Routes>
       </Router>
 
