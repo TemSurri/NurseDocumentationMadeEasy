@@ -7,7 +7,10 @@ const slogans = ["Smarter notes, calmer shifts, more time for care.",
                   "Notes done right so you can breathe easy.",
                   "A friendly helper for nurses who care deeply.",
                   "Finish your notes fast and keep your focus on people.",
-                ]      
+                ]  
+const get_slogan = () => {
+  return slogans[Math.floor(Math.random()*(slogans.length))]
+} 
 
 export default function Hero() {
   const navigate = useNavigate()
@@ -18,7 +21,7 @@ export default function Hero() {
       </h1>
       <p className="mt-6 max-w-2xl text-gray-600 text-lg sm:text-xl animate-slideUp [animation-delay:0.3s]">
        {
-       slogans[Math.floor(Math.random()*(slogans.length-0.1))]
+       get_slogan()
        }
       </p>
       <div className="mt-8 flex flex-col sm:flex-row gap-4 animate-fadeIn [animation-delay:0.5s]">
