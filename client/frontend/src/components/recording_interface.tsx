@@ -1,5 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+
+const featureList = [
+  { name: "SOAP", description: "Structured medical-style note format: Subjective, Objective, Assessment, and Plan." },
+  { name: "Lifestyle", description: "Capture daily habits, routines, and lifestyle factors that affect wellbeing." },
+  { name: "AI Insight", description: "Adds AI-powered interpretation to identify patterns or trends in your notes." },
+];
 
 export default function Interface() {
   type RecordingState = "not-recording" | "recording" | "paused" | "finished";
@@ -21,12 +28,6 @@ export default function Interface() {
       setRecordingDots("");
     }
   }, [recordState]);
-
-  const featureList = [
-    { name: "SOAP", description: "Structured medical-style note format: Subjective, Objective, Assessment, and Plan." },
-    { name: "Lifestyle", description: "Capture daily habits, routines, and lifestyle factors that affect wellbeing." },
-    { name: "AI Insight", description: "Adds AI-powered interpretation to identify patterns or trends in your notes." },
-  ];
 
   const isLocked = recordState !== "not-recording";
 

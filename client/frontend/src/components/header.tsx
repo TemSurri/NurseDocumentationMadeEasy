@@ -6,12 +6,13 @@ export default function Header() {
   return (
     <header className="w-full bg-white/70 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-blue-600">NurseAI</h1>
+        <h1><a href= "/" className="text-2xl font-bold text-blue-600">NurseAI</a></h1>
 
         <nav className="hidden sm:flex space-x-6">
-          <a href="#features" className="text-gray-700 hover:text-blue-600 transition">Features</a>
-          <a href="#about" className="text-gray-700 hover:text-blue-600 transition">About</a>
-          <a href="#contact" className="text-gray-700 hover:text-blue-600 transition">Contact</a>
+          <a href="/login" className="text-gray-700 hover:text-blue-600 transition">Log In</a>
+          <a href="/signup" className="text-gray-700 hover:text-blue-600 transition">Sign Up</a>
+          <a href="/about" className="text-gray-700 hover:text-blue-600 transition">About</a>
+  
         </nav>
 
         <button
@@ -28,25 +29,25 @@ export default function Header() {
         <nav className="sm:hidden bg-white border-t border-gray-200 animate-fadeIn">
           <div className="flex flex-col space-y-3 p-4">
             <a
-              href="#features"
-              className="text-gray-700 hover:text-blue-600 transition"
-              onClick={() => setMenuOpen(false)}
-            >
-              Features
-            </a>
-            <a
-              href="#about"
+              href="/about"
               className="text-gray-700 hover:text-blue-600 transition"
               onClick={() => setMenuOpen(false)}
             >
               About
             </a>
             <a
-              href="#contact"
+              href="/signup"
               className="text-gray-700 hover:text-blue-600 transition"
               onClick={() => setMenuOpen(false)}
             >
-              Contact
+              Sign Up
+            </a>
+            <a
+              href="/login"
+              className="text-gray-700 hover:text-blue-600 transition"
+              onClick={() => setMenuOpen(false)}
+            >
+              Login
             </a>
           </div>
         </nav>
