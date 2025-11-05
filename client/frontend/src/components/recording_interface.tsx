@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback} from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import axiosInstance from '../api.ts';
 
 
 const featureList = [
@@ -64,23 +65,16 @@ export default function Interface() {
 
   const handleFinish = () => setRecordState("finished");
 
-  const handleGenerateNotes = () =>
-    setGeneratedNotes(
-      `quick some notes test
-      big fat monkey boi
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      moneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkeymoneymonkey
-      big
-        `
-    );
+  const handleGenerateNotes = async () => {
+    try{
+      const res = await axiosInstance.get('/api');
+      setGeneratedNotes(res.data.notes);
+    }catch (error){
+      console.log(error);
+      setGeneratedNotes('something went wrong :/ Try again.');
+    }
+  }
+   
 
   const handleReset = () => {
     setRecordState("not-recording");
@@ -88,7 +82,7 @@ export default function Interface() {
     setShowInfo({});
     setGeneratedNotes("");
   };
-  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 to-sky-100 flex items-center justify-center p-4">
