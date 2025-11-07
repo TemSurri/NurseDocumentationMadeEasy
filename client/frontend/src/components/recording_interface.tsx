@@ -8,17 +8,17 @@ const featureList = [
   { name: "Lifestyle", description: "Capture daily habits, routines, and lifestyle factors that affect wellbeing." },
   { name: "AI Insight", description: "Adds AI-powered interpretation to identify patterns or trends in your notes." },
 ];
-  const CheckFilled = () => (
-    <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-      <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM11 16l-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z" />
-    </svg>
-  );
+const CheckFilled = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM11 16l-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z" />
+  </svg>
+);
 
-  const CheckOutline = () => (
-    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="1.5" className="w-5 h-5">
-      <circle cx="12" cy="12" r="9" />
-      <path d="M9 12.5l2 2L15 10" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>)
+const CheckOutline = () => (
+  <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" strokeWidth="1.5" className="w-5 h-5">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M9 12.5l2 2L15 10" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>)
 
 export default function Interface() {
   type RecordingState = "not-recording" | "recording" | "paused" | "finished";
