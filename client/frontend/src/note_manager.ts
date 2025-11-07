@@ -1,4 +1,3 @@
-import AxiosInstance from './api.ts';
 
 export default class NoteManager{
     private notes:string[] = [];
