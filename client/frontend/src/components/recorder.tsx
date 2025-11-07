@@ -1,8 +1,6 @@
 import { useState, useRef } from "react";
 import NoteManager from '../note_manager.ts';
 
-
-
 export default function Recorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
