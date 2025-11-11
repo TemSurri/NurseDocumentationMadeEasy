@@ -10,6 +10,7 @@ const featureList = [
   { name: "AI Insight", description: "Adds AI-powered interpretation to identify patterns or trends in your notes." },
 ];
 
+
 const CheckFilled = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
     <path d="M12 2a10 10 0 100 20 10 10 0 000-20zM11 16l-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6z" />

@@ -10,7 +10,6 @@ interface ChildProps {
 }
 
 export default function RecordingFunctionality({features, recordState, setRecordState}:ChildProps) {
-
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const TranscriptionManager = useRef(new RealTimeNoteManager()).current;
     const [transcriptions, setTranscriptions] = useState<string>('')
