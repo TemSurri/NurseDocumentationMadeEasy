@@ -36,6 +36,7 @@ export default function Recorder() {
       console.error("Mic access failed:", err);
     }
   };
+  
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
