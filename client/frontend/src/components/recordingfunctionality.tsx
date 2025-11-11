@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect} from "react";
-import axiosInstance from '../api.ts';
+import { useState, useEffect, useRef} from "react";
+import RealTimeNoteManager from '../note_manager.ts';
 
 type RecordingState = "not-recording" | "recording" | "paused" | "finished";
 interface ChildProps {
@@ -11,14 +11,69 @@ interface ChildProps {
 
 export default function RecordingFunctionality({features, recordState, setRecordState}:ChildProps) {
 
-    const [recordingDots, setRecordingDots] = useState<string>("");
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+    const TranscriptionManager = useRef(new RealTimeNoteManager()).current;
+    const [transcriptions, setTranscriptions] = useState<string>('')
 
+    const streamRef = useRef<MediaStream | null>(null);
+
+
+    const [recordingDots, setRecordingDots] = useState<string>("");
     const [generatedNotes, setGeneratedNotes] = useState<string>("");
-    const handleFinish = () => setRecordState("finished");
-    
+    const handleFinish = () => { 
+      releaseStream();
+      setRecordState("finished");
+    };
+
+    const startRecording = async () => {
+      try {
+        let stream = streamRef.current;
+        if (!stream) {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          streamRef.current = stream;
+        }
+        const recorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = recorder;
+
+        recorder.ondataavailable = (event) => {
+          console.log("sending chunk: ",event.data.size, " bytes");
+          if (event.data.size > 0) TranscriptionManager.sendAudioChunk(event.data);
+          setTranscriptions(TranscriptionManager.getAll());
+
+        };
+        recorder.onstop = () => {
+
+        };
+        recorder.start(5000)
+      } catch (err) {
+        console.error("Mic access failed:", err);
+      }
+    };
+
+    const stopRecording = () => {
+      mediaRecorderRef.current?.stop();
+
+    };
+    const releaseStream = () => {
+      const recorder = mediaRecorderRef.current;
+      if (!recorder) return;
+
+      try {
+
+        if (recorder.state !== "inactive") recorder.stop();
+
+
+        recorder.stream.getTracks().forEach(track => track.stop());
+      } finally {
+        mediaRecorderRef.current = null;
+        streamRef.current = null;
+      }
+    };
+
 
     useEffect(() => {
         if (recordState === "recording") {
+          startRecording();
           let i = 0;
           const interval = setInterval(() => {
             setRecordingDots(".".repeat((i % 3) + 1));
@@ -26,6 +81,7 @@ export default function RecordingFunctionality({features, recordState, setRecord
           }, 450);
           return () => clearInterval(interval);
         } else {
+          stopRecording();
           setRecordingDots("");
         }
       }, [recordState]);
@@ -36,24 +92,17 @@ export default function RecordingFunctionality({features, recordState, setRecord
         else if (recordState === "paused") setRecordState("recording");
     };
 
-        const handleReset = () => {
-        setRecordState("not-recording");
-
-
-        setGeneratedNotes("");
+    const handleReset = () => {
+      setRecordState("not-recording");
+      setGeneratedNotes("");
+      streamRef.current = null;
     };
 
 
     const handleGenerateNotes = async () => {
-    console.log('these were ur options', features);
-    try {
-      const res = await axiosInstance.get('/api');
-      setGeneratedNotes(res.data.notes);
-    } catch (error) {
-      console.log(error);
-      setGeneratedNotes('something went wrong :/ Try again.');
-    }
-  };
+      console.log('these were ur options', features);
+      setGeneratedNotes(transcriptions);
+    };
 
     return (
         <>

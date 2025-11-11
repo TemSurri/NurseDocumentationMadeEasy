@@ -1,10 +1,14 @@
 
-export default class NoteManager{
+export default class RealTimeNoteManager{
     private notes:string[] = [];
     
     addTranscript(part: string) {
         this.notes.push(part);
     };
+
+    clearTranscript() {
+        this.notes = [];
+    }
 
     getAll() {
         return this.notes.join(" ");
