@@ -5,7 +5,7 @@ export default async function apiCall(blob:Blob){
 
     const formdata = new FormData();
     formdata.append(
-        "audio", blob, "recording"
+        "audio", blob, "audio-recording"
     );
 
     try {
@@ -13,10 +13,11 @@ export default async function apiCall(blob:Blob){
         const res = await axiosInstance.post('/upload-audio', formdata, {
             headers: {"Content-Type": "multipart/form-data"}
         } );
-        console.log('success', res.data);
+
+        console.log('2 //api manager - api call success:', res.data);
         return res.data;
     } catch (error) {
-        console.log('error', error);
+        console.log('2 //api manager -api call error:', error);
         return error;
     };
 

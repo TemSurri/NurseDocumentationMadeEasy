@@ -12,15 +12,17 @@ export default class RealTimeNoteManager{
     }
 
     getAll() {
-        return this.notes.join(" ");
+        return this.notes.join("\n\n");
     };
 
     async Audio2Transcript(blob: Blob) {
-        console.log('size of blob : ', blob.size, ' bytes')
+        console.log('1 //... sending audio chunk: ', blob.size, ' bytes');
         const new_transcript = await apiCall(blob);
         
-        console.log('adding to notes - recieved:', new_transcript)
-        this.addTranscript('new_transcript');
+        console.log('3 //notes manager - recieved new note:', new_transcript);
+       
+        this.addTranscript(new_transcript.transcript);
+        
     }
 
 

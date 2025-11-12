@@ -12,13 +12,13 @@ interface ChildProps {
 export default function RecordingFunctionality({features, recordState, setRecordState}:ChildProps) {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const TranscriptionManager = useRef(new RealTimeNoteManager()).current;
-    const [transcriptions, setTranscriptions] = useState<string>('')
 
     const streamRef = useRef<MediaStream | null>(null);
 
 
     const [recordingDots, setRecordingDots] = useState<string>("");
     const [generatedNotes, setGeneratedNotes] = useState<string>("");
+
     const handleFinish = () => { 
       releaseStream();
       setRecordState("finished");
@@ -34,25 +34,58 @@ export default function RecordingFunctionality({features, recordState, setRecord
         const recorder = new MediaRecorder(stream);
         mediaRecorderRef.current = recorder;
 
+        //  new test code
+        const recordedChunks: BlobPart[] = [];
+
         recorder.ondataavailable = (event) => {
-          console.log("sending chunk: ",event.data.size, " bytes");
-          if (event.data.size > 0) TranscriptionManager.Audio2Transcript(event.data);
-          setTranscriptions(TranscriptionManager.getAll());
-
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+            
+          }
         };
+
+        //  playback test after stopping
         recorder.onstop = () => {
-
+          if (recordedChunks.length > 0) {
+            const blob = new Blob(recordedChunks, { type: "audio/webm" });
+            const url = URL.createObjectURL(blob);
+            const audio = document.createElement("audio");
+            audio.src = url;
+            audio.controls = true;
+            audio.autoplay = true;
+            document.body.appendChild(audio);
+            console.log("🎤 Playback test added — you should hear your voice now!");
+          } else {
+            console.warn("⚠️ No chunks to play back.");
+          }
         };
+        // ⬆️ end test code
+
+
+
+
+
+
+        //recorder.ondataavailable = (event) => {
+      
+        //  if (event.data.size > 0) TranscriptionManager.Audio2Transcript(event.data);
+          
+        //};
+        //recorder.onstop = () => {
+      
+        //};
+
         recorder.start(5000)
+
       } catch (err) {
         console.error("Mic access failed:", err);
       }
     };
 
     const stopRecording = () => {
-      mediaRecorderRef.current?.stop();
-
+      mediaRecorderRef.current?.stop();  
     };
+
     const releaseStream = () => {
       const recorder = mediaRecorderRef.current;
       if (!recorder) return;
@@ -68,7 +101,6 @@ export default function RecordingFunctionality({features, recordState, setRecord
         streamRef.current = null;
       }
     };
-
 
     useEffect(() => {
         if (recordState === "recording") {
@@ -94,16 +126,14 @@ export default function RecordingFunctionality({features, recordState, setRecord
     const handleReset = () => {
       setRecordState("not-recording");
       setGeneratedNotes("");
-      setTranscriptions('');
+      
       TranscriptionManager.clearTranscript();
-
       streamRef.current = null;
     };
 
-
-    const handleGenerateNotes = async () => {
+    const handleGenerateNotes = () => {
       console.log('these were ur options', features);
-      setGeneratedNotes(transcriptions);
+      setGeneratedNotes(TranscriptionManager.getAll());
     };
 
     return (
