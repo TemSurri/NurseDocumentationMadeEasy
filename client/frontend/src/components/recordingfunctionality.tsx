@@ -61,15 +61,15 @@ export default function RecordingFunctionality({
 
           const blob = new Blob(recordedChunks, { type: mimeType });
           const url = URL.createObjectURL(blob);
-          setLastRecordingURL(url); // show playback button
-          console.log("🎤 Recording ready for playback:", url);
+          setLastRecordingURL(url); // test --show playback button
+          console.log("Recording ready for playback:", url);
         } else {
-          console.warn("⚠️ No audio chunks recorded.");
+          console.warn("No audio chunks recorded.");
         }
       };
 
       recorder.start(5000);
-      console.log("🎙️ Recording started...");
+     
     } catch (err) {
       console.error("Mic access failed:", err);
       alert("Unable to access your microphone. Please enable it in settings.");
@@ -117,7 +117,7 @@ export default function RecordingFunctionality({
   const handleReset = () => {
     setRecordState("not-recording");
     setGeneratedNotes("");
-    setLastRecordingURL(null); // clear playback
+    setLastRecordingURL(null); // test -- clear playback
     TranscriptionManager.clearTranscript();
     streamRef.current = null;
   };
@@ -207,7 +207,7 @@ export default function RecordingFunctionality({
         )}
       </AnimatePresence>
 
-      {/* Show recording playback on mobile */}
+      {/* test --> Show recording playback on mobile */}
       {lastRecordingURL && (
         <div className="mt-4 text-center">
           <audio
@@ -216,7 +216,7 @@ export default function RecordingFunctionality({
             className="w-full sm:w-2/3 mx-auto"
           />
           <p className="text-sm text-gray-500 mt-1">
-            🎧 Tap play to hear your last recording
+            Tap play to hear your last recording
           </p>
         </div>
       )}
