@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef} from "react";
-import RealTimeNoteManager from '../note_manager.ts';
+import RealTimeNoteManager from '../scripts/note_manager.ts';
 
 type RecordingState = "not-recording" | "recording" | "paused" | "finished";
 interface ChildProps {
@@ -36,7 +36,7 @@ export default function RecordingFunctionality({features, recordState, setRecord
 
         recorder.ondataavailable = (event) => {
           console.log("sending chunk: ",event.data.size, " bytes");
-          if (event.data.size > 0) TranscriptionManager.sendAudioChunk(event.data);
+          if (event.data.size > 0) TranscriptionManager.Audio2Transcript(event.data);
           setTranscriptions(TranscriptionManager.getAll());
 
         };
@@ -94,6 +94,9 @@ export default function RecordingFunctionality({features, recordState, setRecord
     const handleReset = () => {
       setRecordState("not-recording");
       setGeneratedNotes("");
+      setTranscriptions('');
+      TranscriptionManager.clearTranscript();
+
       streamRef.current = null;
     };
 

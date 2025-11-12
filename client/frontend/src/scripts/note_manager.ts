@@ -1,3 +1,4 @@
+import apiCall from "./api_manager";
 
 export default class RealTimeNoteManager{
     private notes:string[] = [];
@@ -14,11 +15,12 @@ export default class RealTimeNoteManager{
         return this.notes.join(" ");
     };
 
-    async sendAudioChunk(blob: Blob) {
+    async Audio2Transcript(blob: Blob) {
         console.log('size of blob : ', blob.size, ' bytes')
-        /* do api call that returns transribed nots of the 15 sec blob aka sound gile*/
-         /* add notes to notes thing, ill do an example one for below so i dont forget */
-        this.addTranscript('new string transcript');
+        const new_transcript = await apiCall(blob);
+        
+        console.log('adding to notes - recieved:', new_transcript)
+        this.addTranscript('new_transcript');
     }
 
 
