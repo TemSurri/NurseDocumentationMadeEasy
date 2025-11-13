@@ -154,6 +154,7 @@ const startRecording = async () => {
   const handleGenerateNotes = () => {
     console.log("these were your options", features);
     setGeneratedFinalNotes(TranscriptionManager.getAll());
+    console.log(generatedFinalNotes);
   };
 
   return (
