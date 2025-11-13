@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="w-full bg-white/70 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <h1><a href= "/" className="text-2xl font-bold text-blue-600">Nurseeasy AI</a></h1>
+        <h1><a href= "/" className="text-2xl font-bold text-blue-600">NurseEasy AI</a></h1>
 
         <nav className="hidden sm:flex space-x-6">
           <a href="/login" className="text-gray-700 hover:text-blue-600 transition">Log In</a>
