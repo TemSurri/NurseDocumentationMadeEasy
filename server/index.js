@@ -1,79 +1,67 @@
-const express = require('express');
-const multer = require('multer');
-const cors = require('cors');
-
-const corsOptions = {
-  origin :['http://localhost:5173']
-};
-require('dotenv').config();
-const OpenAi = require('openai');
+const express = require("express");
+const multer = require("multer");
+const cors = require("cors");
+const OpenAI = require("openai");
+const { toFile } = require("openai/uploads"); 
+require("dotenv").config();
 
 const app = express();
-app.use(cors(corsOptions));
-const PORT = 3001;
-const storage = multer.memoryStorage();
-const upload = multer({storage})
+app.use(cors({ origin: ["http://localhost:5173"] }));
 
-const openai = new OpenAi({
-  apiKey: process.env.OPEN_API_KEY
-})
+const upload = multer({ storage: multer.memoryStorage() });
 
-console.log(process.env.OPEN_API_KEY);
+const client = new OpenAI({
+  apiKey: process.env.OPEN_API_KEY,
+});
 
-queue = []
+let queue = [];
 let processing = false;
 
 async function processQueue() {
   if (processing || queue.length === 0) return;
   processing = true;
 
-  const {file, res} = queue.shift();
+  const { file, res } = queue.shift();
 
   try {
-
-    // open ai api call and get thetranscript 
-    const result = await openai.audio.transcriptions.create({
-      file: {
-        buffer: file.buffer,
-        mimetype: file.mimetype,
-        filename: file.originalname || "audio.webm"
-      },
-      model: "whisper-1",       
-      prompt: "This is nursing documentation. Transcribe clearly.",
-      response_format: "text"
+    console.log("Sending to Whisper:", {
+      name: file.originalname,
+      type: file.mimetype,
+      size: file.size,
     });
-    const transcript = result.trim();
-    console.log("Whisper transcription:", transcript);
-    
-    res.json({success:true, transcript});
 
-  }catch (error){
-    console.log(error);
-    res.status(500).json({success: false, error: "Processing failed"})
+
+    const filename = file.originalname && file.originalname.includes(".")
+      ? file.originalname
+      : "audio.webm";
+
+    // convert multer buffer -> proper file-like object 
+    const whisperFile = await toFile(file.buffer, filename);
+
+    const result = await client.audio.transcriptions.create({
+      file: whisperFile,
+      model: "whisper-1",        
+      response_format: "text",
+    });
+
+    console.log("Whisper result:", result);
+
+    res.json({ success: true, transcript: result });
+
+  } catch (err) {
+    console.error("Whisper error:", err);
+    res.status(500).json({ success: false, error: err.message });
   } finally {
     processing = false;
     processQueue();
   }
-
 }
 
+app.post("/upload-audio", upload.single("audio"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-app.post('/upload-audio', upload.single("audio"), async(req, res)=> {
-  if (!req.file) return res.status(400).json({error: "No file uploaded"});
-
-  queue.push({file: req.file, res})
-
-  console.log("Added file to queue:", {
-  originalname: req.file.originalname,
-  mimetype: req.file.mimetype,
-  size: req.file.size,
-  queuelength : queue.length
-  });
-
-
+  queue.push({ file: req.file, res });
   processQueue();
+});
 
-})
-
-
-app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
+app.listen(3001, () => console.log("Server running at http://localhost:3001"));

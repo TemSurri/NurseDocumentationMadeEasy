@@ -2,9 +2,13 @@ import apiCall from "./api_manager";
 
 export default class RealTimeNoteManager{
     private notes:string[] = [];
+    onUpdate: ((newNote: string) => void) | null = null;
     
     addTranscript(part: string) {
         this.notes.push(part);
+        if (this.onUpdate) {
+            this.onUpdate(part);
+        }
     };
 
     clearTranscript() {

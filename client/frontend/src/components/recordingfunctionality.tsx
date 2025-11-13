@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import RealTimeNoteManager from "../scripts/note_manager.ts";
 
+
 type RecordingState = "not-recording" | "recording" | "paused" | "finished";
 interface ChildProps {
   features: string[];
@@ -16,10 +17,16 @@ export default function RecordingFunctionality({
 }: ChildProps) {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const TranscriptionManager = useRef(new RealTimeNoteManager()).current;
+  useEffect(() => {
+    TranscriptionManager.onUpdate = (newNote: string) => {
+    setGeneratedNotes(prev => prev + "\n" + newNote);
+  };
+}, [TranscriptionManager]);
   const streamRef = useRef<MediaStream | null>(null);
 
   const [recordingDots, setRecordingDots] = useState<string>("");
   const [generatedNotes, setGeneratedNotes] = useState<string>("");
+  const [generatedFinalNotes, setGeneratedFinalNotes] = useState<string>("");
   const [lastRecordingURL, setLastRecordingURL] = useState<string | null>(null); // for playback
 
   const handleFinish = () => {
@@ -27,58 +34,80 @@ export default function RecordingFunctionality({
     setRecordState("finished");
   };
 
-  const startRecording = async () => {
-    try {
-      let stream = streamRef.current;
-      if (!stream) {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        streamRef.current = stream;
-      }
+  const shouldRecordRef = useRef(false);
 
-      const recorder = new MediaRecorder(stream);
-      const recordedChunks: BlobPart[] = []; // store chunks for playback
+const startRecording = async () => {
+  try {
+    if (!streamRef.current) {
+      streamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+    }
+    const stream = streamRef.current;
+
+    shouldRecordRef.current = true;
+
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    let mimeType = "audio/webm;codecs=opus";
+    if (isSafari) mimeType = "audio/mp4";
+
+    if (!MediaRecorder.isTypeSupported(mimeType)) {
+      mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "";
+    }
+
+    console.log("Using MIME:", mimeType);
+
+    const startNewRecorder = () => {
+      if (!shouldRecordRef.current) return; 
+
+      const recorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = recorder;
 
-      /* === original recording logic (temporarily commented for testing) ===
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) TranscriptionManager.Audio2Transcript(event.data);
-      };
-      === end original === */
+      const chunks: BlobPart[] = [];
 
-      // New test logic with playback
-      recorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-          TranscriptionManager.Audio2Transcript(event.data);
-        }
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
       };
 
       recorder.onstop = () => {
-        if (recordedChunks.length > 0) {
-          const mimeType = MediaRecorder.isTypeSupported("audio/mp4")
-            ? "audio/mp4"
-            : "audio/webm";
+        if (!shouldRecordRef.current) return; 
 
-          const blob = new Blob(recordedChunks, { type: mimeType });
-          const url = URL.createObjectURL(blob);
-          setLastRecordingURL(url); // test --show playback button
-          console.log("Recording ready for playback:", url);
-        } else {
-          console.warn("No audio chunks recorded.");
+        if (chunks.length > 0) {
+          const blob = new Blob(chunks, { type: mimeType });
+
+          if (blob.size > 30000) {
+            console.log("Sending chunk to Whisper");
+            TranscriptionManager.Audio2Transcript(blob);
+          } else {
+            console.log("Ignored tiny chunk");
+          }
+        }
+
+        // Safari restart delay
+        if (shouldRecordRef.current) {
+          setTimeout(() => startNewRecorder(), 120);
         }
       };
 
-      recorder.start(5000);
-     
-    } catch (err) {
-      console.error("Mic access failed:", err);
-      alert("Unable to access your microphone. Please enable it in settings.");
-    }
+      recorder.start();
+
+      setTimeout(() => {
+        if (recorder.state === "recording") recorder.stop();
+      }, 5000);
+    };
+
+    startNewRecorder();
+  } catch (err) {
+    console.error("Mic access failed:", err);
+    alert("Enable mic permissions.");
+  }
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
+    shouldRecordRef.current = false; 
+    const rec = mediaRecorderRef.current;
+    if (rec && rec.state === "recording") rec.stop();
   };
+
 
   const releaseStream = () => {
     const recorder = mediaRecorderRef.current;
@@ -124,7 +153,7 @@ export default function RecordingFunctionality({
 
   const handleGenerateNotes = () => {
     console.log("these were your options", features);
-    setGeneratedNotes(TranscriptionManager.getAll());
+    setGeneratedFinalNotes(TranscriptionManager.getAll());
   };
 
   return (
@@ -222,7 +251,8 @@ export default function RecordingFunctionality({
       )}
 
       <div className="mt-3 w-full bg-gray-50 border border-gray-200 shadow-inner p-4 text-sm sm:text-base text-gray-700 rounded-none text-left whitespace-pre-wrap break-words font-mono tracking-wide min-h-[120px] leading-relaxed">
-        {recordState === "recording" ? (
+
+        {recordState === "recording" && (
           <motion.span
             key="recording-status"
             animate={{ opacity: [1, 0.5, 1] }}
@@ -231,14 +261,22 @@ export default function RecordingFunctionality({
           >
             Recording{recordingDots}
           </motion.span>
-        ) : generatedNotes ? (
-          <span>{generatedNotes}</span>
-        ) : (
+        )}
+
+        {generatedNotes && (
+          <div className="mb-2">
+            <span>{generatedNotes}</span>
+          </div>
+        )}
+
+        {!generatedNotes && recordState !== "recording" && (
           <span className="text-gray-400 italic">
             Upon generation, a preview of your notes will be visible here.
           </span>
         )}
-      </div>
+
+    </div>
+
     </>
   );
 }
