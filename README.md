@@ -49,7 +49,10 @@ The system works by capturing audio through the browser's MediaRecorder API, spl
 - Render (backend) 
 - Only conifgured to handle 20-30 users at the same time. For now.
 
-This is my architecture for the project:
+###This is my architecture for the project:
+# Current Costs
+- Open API costs : $0.50 CAD per Hour of recording
+- Hosting: 3 dollar/month (will be more expensive if scaled)
                            
                            ┌──────────────────────────────┐
                            │          FRONTEND            │
