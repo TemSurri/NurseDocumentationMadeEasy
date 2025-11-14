@@ -17,8 +17,7 @@ export default function About() {
         </h1>
 
         <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-8 text-center break-words overflow-hidden text-balance">
-          blah blah blah nurses wtv
-        </p>
+          NurseEasy AI turns spoken audio into clear nursing notes using a simple browser-based recorder and cloud AI. It works on any modern phone or computer with no downloads. </p>
 
         <div className="grid sm:grid-cols-3 gap-4 mb-8">
           <motion.div
@@ -26,10 +25,10 @@ export default function About() {
             className="bg-sky-50 border border-sky-100 rounded-2xl p-5 text-center break-words overflow-hidden"
           >
             <h2 className="text-lg font-semibold text-blue-600 mb-2 break-words">
-              geaturue
+              Why?
             </h2>
             <p className="text-gray-600 text-sm break-words overflow-hidden">
-              egnkekgnvlsjvnislknvjnslvj .
+              Nurses spend a lot of time typing notes, and many existing tools are complicated or hard to fit into daily workflows, especially at the bedside of a patient.
             </p>
           </motion.div>
 
@@ -38,22 +37,11 @@ export default function About() {
             className="bg-sky-50 border border-sky-100 rounded-2xl p-5 text-center break-words overflow-hidden"
           >
             <h2 className="text-lg font-semibold text-blue-600 mb-2 break-words">
-              Carti
+              Privacy 
             </h2>
             <p className="text-gray-600 text-sm break-words overflow-hidden">
-              waadadadadadada
-            </p>
-          </motion.div>
-
-          <motion.div
-            whileHover={{ scale: 1.03 }}
-            className="bg-sky-50 border border-sky-100 rounded-2xl p-5 text-center break-words overflow-hidden"
-          >
-            <h2 className="text-lg font-semibold text-blue-600 mb-2 break-words">
-              FEature
-            </h2>
-            <p className="text-gray-600 text-sm break-words overflow-hidden">
-              blah bah
+             When data is in transit it is encrypted over HTTPS. Additionally, no data is ever in rest as the current system is set up to never store data. 
+             Regardless the current system has no secure user sessions (login/logout) therefore it is only intended for demonstration and hackathon use.
             </p>
           </motion.div>
         </div>
