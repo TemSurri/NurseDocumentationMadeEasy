@@ -2,6 +2,13 @@
 
 https://nurseeasy-ai.vercel.app/ 
 (If we dont win the hackathon im going to kill the backend service so it wont work anymore but I'll keep the vercel service running)
+
+Overall Demo:
+
+https://github.com/user-attachments/assets/e3e759a8-6bf9-497e-8cab-43bf51086bee
+
+Error Catch Demo:
+
 https://github.com/user-attachments/assets/50e0e5a4-d6e9-4e0d-a1ba-ba352416a034
 
 NurseEasy Ai is a web application that converts real-time voice recordings into structured, professional nursing notes. It allows users to record audio directly in the browser, processes the speech through a backend service using Whisper for transcription, and generates formatted clinical notes using GPT models based on user-selected structures such as SOAP Notes, Lifestyle Notes, or AI Insight Notes.
@@ -24,21 +31,18 @@ The system works by capturing audio through the browser's MediaRecorder API, spl
 ## Technologies Used
 
 ### Frontend
-- React (TypeScript)
-- Vite
+- React
+- Typscript
 - TailwindCSS
 - Framer Motion
-- Axios
 - MediaRecorder API
 
 ### Backend
 - Node.js
 - Express
-- Multer (memory storage)
-- Whisper API (OpenAI)
-- GPT models (OpenAI Chat Completions API)
-- CORS
-- dotenv
+- Multer (memory storage) lol
+- Whisper-1 API (OpenAI)
+- GPT 4o mini API (OpenAPI)
 
 ### Deployment
 - Vercel (frontend)
